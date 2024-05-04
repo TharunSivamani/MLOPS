@@ -38,3 +38,7 @@ install:
 
 train-cifar10:
 	python src/train_cifar10.py
+
+IMAGE_NAME = MLOPS-02
+build:
+	docker build -t ${IMAGE_NAME} .

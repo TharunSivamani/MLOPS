@@ -28,3 +28,10 @@ test-full: ## Run all tests
 
 train: ## Train the model
 	python src/train.py
+
+# my scripts
+install-quiet:
+	pip install -r requirements.txt --q
+
+install:
+	pip install -r requirements.txt

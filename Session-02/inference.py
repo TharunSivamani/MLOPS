@@ -30,10 +30,14 @@ class Predictor(BasePredictor):
         config = resolve_data_config({}, model=self.model)
         transform = create_transform(**config)
 
-        url, filename = (image, "temp.jpg")
-        urllib.request.urlretrieve(url, filename)
-        img = Image.open(filename).convert('RGB')
-        tensor = transform(img).unsqueeze(0) # transform and add batch dimension
+        if str(image).startswith("https") or str(image).startswith("http"):
+            url, filename = (image, "temp.jpg")
+            urllib.request.urlretrieve(url, filename)
+            img = Image.open(filename).convert('RGB')
+            tensor = transform(img).unsqueeze(0) # transform and add batch dimension
+        else:
+            img = Image.open(image).convert('RGB')
+            tensor = transform(img).unsqueeze(0) # transform and add batch dimension
 
         import torch
         with torch.no_grad():

@@ -35,3 +35,6 @@ install-quiet:
 
 install:
 	pip install -r requirements.txt
+
+train-cifar10:
+	python src/train_cifar10.py

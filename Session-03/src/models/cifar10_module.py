@@ -148,7 +148,7 @@ class CIFAR10LitModule(LightningModule):
         self.val_acc(preds, targets)
         self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
         self.log("val/acc", self.val_acc, on_step=False, on_epoch=True, prog_bar=True)
-        self.logger.log_hyperparams(vars(self.hparams))
+        self.logger.log_hyperparams(vars(self.hparams), metrics = {"hp_metric": self.val_loss})
 
     def on_validation_epoch_end(self) -> None:
         "Lightning hook that is called when a validation epoch ends."

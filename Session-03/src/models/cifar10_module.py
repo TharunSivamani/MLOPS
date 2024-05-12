@@ -55,7 +55,7 @@ class CIFAR10LitModule(LightningModule):
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
-        self.save_hyperparameters(logger=False)
+        self.save_hyperparameters(logger=False, ignore=["net"])
 
         self.net = timm.create_model(net, pretrained=True, num_classes=10)
 
@@ -124,8 +124,8 @@ class CIFAR10LitModule(LightningModule):
         # update and log metrics
         self.train_loss(loss)
         self.train_acc(preds, targets)
-        self.log("train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
-        self.log("train/acc", self.train_acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("train/loss", self.train_loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train/acc", self.train_acc, on_step=True, on_epoch=True, prog_bar=True)
 
         # return loss or backpropagation will fail
         return loss
@@ -148,6 +148,7 @@ class CIFAR10LitModule(LightningModule):
         self.val_acc(preds, targets)
         self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
         self.log("val/acc", self.val_acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.logger.log_hyperparams(vars(self.hparams))
 
     def on_validation_epoch_end(self) -> None:
         "Lightning hook that is called when a validation epoch ends."

@@ -1,6 +1,8 @@
 from typing import Any, Dict, Tuple
 
 import torch
+import torch.nn.functional as F
+import torchvision.transforms as T
 import timm
 from lightning import LightningModule
 from torchmetrics import MaxMetric, MeanMetric
@@ -75,6 +77,9 @@ class CIFAR10LitModule(LightningModule):
         # for tracking best so far validation accuracy
         self.val_acc_best = MaxMetric()
 
+        self.apply_transform = T.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
+
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the model `self.net`.
 
@@ -82,6 +87,18 @@ class CIFAR10LitModule(LightningModule):
         :return: A tensor of logits.
         """
         return self.net(x)
+    
+    @torch.jit.export
+    def forward_jit(self, x: torch.Tensor):
+        with torch.no_grad():
+
+            x = x.permute(0, 3, 1, 2).div(255.)
+            x = self.apply_transform(x)
+
+            logits = self.net(x)
+            preds = F.softmax(logits, dim=-1)
+        
+        return preds
 
     def on_train_start(self) -> None:
         """Lightning hook that is called when training begins."""

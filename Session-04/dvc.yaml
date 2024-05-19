@@ -1,0 +1,5 @@
+stages:
+  train-cifar10:
+    cmd: python3 src/train.py experiment=example.yaml
+    deps:
+    - data/cifar10
